@@ -12,3 +12,16 @@ def index(request):
         'posts': posts,
     }
     return render(request, 'cooking/index.html', context)
+
+
+def posts_by_category(request, pk: int):
+    """Возврат ответа на нажатие кнопок категорий"""
+    categories = Category.objects.all()
+    filtered_posts = Post.objects.filter(category_id=pk)  # returns QuerySet
+
+    context = {
+        'title': filtered_posts[0].category,
+        'categories': categories,
+        'posts': filtered_posts,
+    }
+    return render(request, 'cooking/index.html', context)
