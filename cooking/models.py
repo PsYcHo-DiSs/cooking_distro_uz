@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from django.db.models import F
 
 
 class Category(models.Model):
@@ -34,6 +35,11 @@ class Post(models.Model):
 
     def get_absolute_url(self):
         return reverse('post_detail', kwargs={'pk': self.pk})
+
+    def increment_views(self):
+        self.watched = F('watched') + 1
+        self.save(update_fields=['watched'])
+        self.refresh_from_db(fields=['watched'])
 
     class Meta:
         verbose_name = 'Пост'

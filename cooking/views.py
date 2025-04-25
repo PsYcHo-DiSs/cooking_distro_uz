@@ -29,10 +29,10 @@ def posts_by_category(request, pk: int):
 
 def post_detail(request, pk: int):
     """Страница статьи"""
-    post = Post.objects.filter(pk=pk)
-    post.update(watched=F('watched') + 1)
+    post = Post.objects.get(pk=pk)
+    post.increment_views()
     context = {
-        'title': post[0].title,
-        'post': post[0]
+        'title': post.title,
+        'post': post,
     }
     return render(request, 'cooking/article_detail.html', context)
