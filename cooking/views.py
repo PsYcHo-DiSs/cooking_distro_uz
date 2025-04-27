@@ -43,8 +43,7 @@ def add_post(request):
     if request.method == 'POST':
         form = PostAddForm(request.POST, request.FILES)
         if form.is_valid():
-            post = Post.objects.create(**form.cleaned_data)
-            post.save()
+            post = form.save()
             return redirect('post_detail', pk=post.pk)
 
     form = PostAddForm()
