@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load blog_tags %}
 
 {% block main %}
 <div class="d-flex justify-content-between">
@@ -48,36 +49,20 @@
     <!--  Recommendation-->
     <div class="col-1"></div>
     <div class="col-4">
+        {% get_top_5_posts as recommended_posts %}
+        {% for post in recommended_posts %}
         <div class="card" style="width: 18rem;">
-            <img class="card-img-top" src="https://www.raumplus.ru/upload/iblock/99e/Skoro-zdes-budet-foto.jpg"
+            {% if post.photo %}
+            <img class="card-img-top" src="{{ post.photo.url }}"
                  width="200" alt="">
-            <div class="card-body"><h5 class="card-title">Блюдо</h5><a href="#!" class="btn btn-primary">Подробнее</a>
+            {% else %}
+            <img class="card-img-top" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQL_87FaEMiwFSf1nLWBw4-3oL_9Wew8pAsyQ&s"
+                 width="200" alt="">
+            {% endif %}
+            <div class="card-body"><h5 class="card-title">{{ post.title }}</h5><a href="{{ post.get_absolute_url }}" class="btn btn-primary">Подробнее</a>
             </div>
         </div>
-        <div class="card" style="width: 18rem;">
-            <img class="card-img-top" src="https://www.raumplus.ru/upload/iblock/99e/Skoro-zdes-budet-foto.jpg"
-                 width="200" alt="">
-            <div class="card-body"><h5 class="card-title">Блюдо</h5><a href="#!" class="btn btn-primary">Подробнее</a>
-            </div>
-        </div>
-        <div class="card" style="width: 18rem;">
-            <img class="card-img-top" src="https://www.raumplus.ru/upload/iblock/99e/Skoro-zdes-budet-foto.jpg"
-                 width="200" alt="">
-            <div class="card-body"><h5 class="card-title">Блюдо</h5><a href="#!" class="btn btn-primary">Подробнее</a>
-            </div>
-        </div>
-        <div class="card" style="width: 18rem;">
-            <img class="card-img-top" src="https://www.raumplus.ru/upload/iblock/99e/Skoro-zdes-budet-foto.jpg"
-                 width="200" alt="">
-            <div class="card-body"><h5 class="card-title">Блюдо</h5><a href="#!" class="btn btn-primary">Подробнее</a>
-            </div>
-        </div>
-        <div class="card" style="width: 18rem;">
-            <img class="card-img-top" src="https://www.raumplus.ru/upload/iblock/99e/Skoro-zdes-budet-foto.jpg"
-                 width="200" alt="">
-            <div class="card-body"><h5 class="card-title">Блюдо</h5><a href="#!" class="btn btn-primary">Подробнее</a>
-            </div>
-        </div>
+        {% endfor %}
     </div>
 </div>
 {% endblock main %}
