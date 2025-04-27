@@ -131,17 +131,13 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION': 'unique-snowflake',
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': f"redis://{getenv('REDIS_HOST')}:{getenv('REDIS_PORT')}/{getenv('REDIS_DB')}",
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            # 'PASSWORD': getenv('REDIS_PASSWORD', None),
+        }
     }
-    # Для редиса
-    # 'default': {
-    #     'BACKEND': 'django_redis.cache.RedisCache',
-    #     'LOCATION': 'redis://127.0.0.1:6379/1',  # 1 — номер базы в редисе
-    #     'OPTIONS': {
-    #         'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-    #     }
-    # }
 }
 
 # Default primary key field type
