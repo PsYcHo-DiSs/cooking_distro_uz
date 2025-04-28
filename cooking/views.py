@@ -1,7 +1,10 @@
 from django.shortcuts import render, redirect
-from .models import Category, Post
-from .forms import PostAddForm, LoginForm
+
 from django.contrib.auth import login, logout
+from django.contrib.auth.models import User
+
+from .models import Category, Post
+from .forms import PostAddForm, LoginForm, RegistrationForm
 
 
 def index(request):
@@ -46,8 +49,8 @@ def add_post(request):
         if form.is_valid():
             post = form.save()
             return redirect('post_detail', pk=post.pk)
-
-    form = PostAddForm()
+    else:
+        form = PostAddForm()
     context = {
         'form': form,
         'title': 'Добавить статью',
@@ -77,3 +80,29 @@ def user_logout(request):
     """Выход пользователя"""
     logout(request)
     return redirect('index')
+
+
+def user_register(request):
+    """Регистрация пользователя"""
+    if request.method == 'POST':
+        form = RegistrationForm(data=request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+    else:
+        form = RegistrationForm()
+
+    context = {
+        'title': 'Регистрация пользователя',
+        'form': form
+    }
+    return render(request, 'cooking/register_form.html', context)
+
+# def user_detail(request, pk: int):
+#     """Страница пользователя"""
+#     user = User.objects.filter(pk=pk)
+#     if user[0]:
+#         context = {
+#
+#         }
+#         return render(request, 'cooking/profile.html', context)
