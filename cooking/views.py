@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 
 from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
+from django.contrib import messages
 
 from .models import Category, Post
 from .forms import PostAddForm, LoginForm, RegistrationForm
@@ -9,8 +10,7 @@ from .forms import PostAddForm, LoginForm, RegistrationForm
 
 def index(request):
     """Для главной странички"""
-    posts = Post.objects.all()  # SELECT * FROM Post
-    # categories = Category.objects.all()
+    posts = Post.objects.all()
     context = {
         'title': 'Главная страница',
         'posts': posts,
@@ -48,6 +48,7 @@ def add_post(request):
         form = PostAddForm(request.POST, request.FILES)
         if form.is_valid():
             post = form.save()
+            messages.success(request, 'Вы успешно создали статью!')
             return redirect('post_detail', pk=post.pk)
     else:
         form = PostAddForm()
@@ -66,9 +67,10 @@ def user_login(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
+            messages.success(request, 'Вы успешно вошли в аккаунт!')
             return redirect('index')
-
-    form = LoginForm()
+    else:
+        form = LoginForm()
     context = {
         'title': 'Авторизация пользователя',
         'form': form,
