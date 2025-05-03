@@ -79,10 +79,21 @@ WSGI_APPLICATION = 'conf.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': getenv('DB_NAME'),
+        'USER': getenv('DB_USER'),
+        'PASSWORD': getenv('DB_PASSWORD'),
+        'HOST': getenv('DB_ADDRESS'),
+        'PORT': getenv('DB_PORT'),
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -128,7 +139,6 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
-
 
 USE_REDIS_CACHE = getenv('USE_REDIS_CACHE', 'False') == 'True'
 if USE_REDIS_CACHE:

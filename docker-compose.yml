@@ -1,9 +1,10 @@
-version: '3'
+version: '3.8'
 
 services:
   redis:
     image: redis:latest
-    container_name: redis
+    container_name: cooking_django_redis
+    restart: always
     ports:
       - "6379:6379"
     volumes:
@@ -18,24 +19,46 @@ services:
       --dir /data
       --dbfilename dump.rdb
       --appendfilename appendonly.aof
+    networks:
+      - cooking_django-network
 
-  # Сервис с Django
-  django:
-    build: ./path_to_django_project  # Путь к твоему проекту с Django (если у тебя есть Dockerfile)
-    container_name: django_app
-    depends_on:
-      - redis  # Убедимся, что Redis поднимется до Django
-    ports:
-      - "8000:8000"  # Открываем порт для доступа к Django-приложению
+  db:
+    image: postgres:15
+    container_name: cooking_django_db
+    restart: always
     environment:
-      - SECRET_KEY=${SECRET_KEY}  # Используем SECRET_KEY из .env
-      - REDIS_HOST=redis  # Указываем имя контейнера Redis как хост
-      - REDIS_PORT=6379
-      - REDIS_PASSWORD=your-redis-password  # Устанавливаем пароль Redis
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
-      - ./path_to_django_project:/app  # Монтируем локальный проект в контейнер для удобства разработки
-    command: python manage.py runserver 0.0.0.0:8000  # Команда для запуска Django
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5555:5432"
+    networks:
+      - cooking_django-network
+
+  django:
+    build:
+      context: ./
+    container_name: cooking_django_app
+    restart: always
+    depends_on:
+      - db
+      - redis
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    networks:
+      - cooking_django-network
+    entrypoint: ["/entrypoint.sh"]
 
 volumes:
-  redis-data:  # Том для хранения данных Redis
+  redis-data:
+  postgres_data:
 
+networks:
+  cooking_django-network:
+    driver: bridge
