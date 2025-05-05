@@ -3,43 +3,88 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
+from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView
 
 from .models import Category, Post
 from .forms import PostAddForm, LoginForm, RegistrationForm
+from .mixins import SuccessMessageMixin
 
 
-def index(request):
+# def index(request):
+#     """Для главной странички"""
+#     posts = Post.objects.all()
+#     context = {
+#         'title': 'Главная страница',
+#         'posts': posts,
+#         # 'category': categories
+#     }
+#     return render(request, 'cooking/index.html', context)
+
+
+class Index(ListView):
     """Для главной странички"""
-    posts = Post.objects.all()
-    context = {
-        'title': 'Главная страница',
-        'posts': posts,
-        # 'category': categories
-    }
-    return render(request, 'cooking/index.html', context)
+    model = Post
+    context_object_name = 'posts'
+    template_name = 'cooking/index.html'
+    extra_context = {'title': 'Главная страница'}
 
 
-def posts_by_category(request, pk: int):
+#
+# def posts_by_category(request, pk: int):
+#     """Возврат ответа на нажатие кнопок категорий"""
+#     # categories = Category.objects.all()
+#     filtered_posts = Post.objects.filter(category_id=pk)  # returns QuerySet
+#     context = {
+#         'title': filtered_posts[0].category,
+#         'posts': filtered_posts,
+#         # 'categories': categories
+#     }
+#     return render(request, 'cooking/index.html', context)
+
+
+class PostByCategory(Index):
     """Возврат ответа на нажатие кнопок категорий"""
-    # categories = Category.objects.all()
-    filtered_posts = Post.objects.filter(category_id=pk)  # returns QuerySet
-    context = {
-        'title': filtered_posts[0].category,
-        'posts': filtered_posts,
-        # 'categories': categories
-    }
-    return render(request, 'cooking/index.html', context)
+
+    def get_queryset(self):
+        """Перегружаем метод для фильтрации"""
+        return Post.objects.filter(category_id=self.kwargs['pk'], is_published=True)
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        """Перегружаем метод для динамических данных"""
+        context = super().get_context_data()
+        category = Category.objects.get(pk=self.kwargs['pk'])
+        context['title'] = category.title
+        return context
 
 
-def post_detail(request, pk: int):
+# def post_detail(request, pk: int):
+#     """Страница статьи"""
+#     post = Post.objects.get(pk=pk)
+#     post.increment_views()
+#     context = {
+#         'title': post.title,
+#         'post': post,
+#     }
+#     return render(request, 'cooking/article_detail.html', context)
+
+
+class PostDetail(DetailView):
     """Страница статьи"""
-    post = Post.objects.get(pk=pk)
-    post.increment_views()
-    context = {
-        'title': post.title,
-        'post': post,
-    }
-    return render(request, 'cooking/article_detail.html', context)
+    model = Post
+    template_name = 'cooking/article_detail.html'
+
+    def get_queryset(self):
+        """Перегружаем метод для фильтрации"""
+        return Post.objects.filter(pk=self.kwargs['pk'])
+
+    def get_context_data(self, **kwargs):
+        """Перегружаем метод для динамических данных"""
+        context = super().get_context_data()
+        post = Post.objects.get(pk=self.kwargs['pk'])
+        post.increment_views()
+        context['title'] = post.title
+        context['post'] = post
+        return context
 
 
 def add_post(request):
@@ -58,6 +103,14 @@ def add_post(request):
 
     }
     return render(request, 'cooking/article_add_form.html', context)
+
+
+class AddPost(SuccessMessageMixin, CreateView):
+    """Добавление статьи от пользователя"""
+    form_class = PostAddForm
+    template_name = 'cooking/article_add_form.html'
+    extra_context = {'title': 'Добавить статью'}
+    success_message = 'Вы успешно создали статью!'
 
 
 def user_login(request):
