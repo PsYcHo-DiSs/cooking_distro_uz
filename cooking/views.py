@@ -4,6 +4,7 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView
+from django.urls import reverse_lazy
 
 from .models import Category, Post
 from .forms import PostAddForm, LoginForm, RegistrationForm
@@ -111,6 +112,23 @@ class AddPost(SuccessMessageMixin, CreateView):
     template_name = 'cooking/article_add_form.html'
     extra_context = {'title': 'Добавить статью'}
     success_message = 'Вы успешно создали статью!'
+
+
+class UpdatePost(SuccessMessageMixin, UpdateView):
+    """Изменение статьи по кнопке"""
+    model = Post
+    form_class = PostAddForm
+    template_name = 'cooking/article_add_form.html'
+    extra_context = {'title': 'Изменить статью'}
+    success_message = 'Вы успешно изменили статью!'
+
+
+class DeletePost(SuccessMessageMixin, DeleteView):
+    """Удаление статьи по кнопке"""
+    model = Post
+    success_url = reverse_lazy('index')
+    context_object_name = 'post'
+    success_message = 'Вы успешно удалили статью!'
 
 
 def user_login(request):
