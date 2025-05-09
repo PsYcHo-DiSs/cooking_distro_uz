@@ -7,8 +7,8 @@ from django.views.generic import ListView, DetailView, CreateView, DeleteView, U
 from django.urls import reverse_lazy
 from django.db.models import Q
 
-from .models import Category, Post
-from .forms import PostAddForm, LoginForm, RegistrationForm
+from .models import Category, Post, Comment
+from .forms import PostAddForm, LoginForm, RegistrationForm, CommentAddForm
 from .mixins import SuccessMessageMixin
 
 
@@ -70,7 +70,7 @@ class PostByCategory(Index):
 #     return render(request, 'cooking/article_detail.html', context)
 
 
-class PostDetail(DetailView):
+class PostDetail(SuccessMessageMixin, DetailView):
     """Страница статьи"""
     model = Post
     template_name = 'cooking/article_detail.html'
@@ -82,29 +82,33 @@ class PostDetail(DetailView):
     def get_context_data(self, **kwargs):
         """Перегружаем метод для динамических данных"""
         context = super().get_context_data()
-        post = Post.objects.get(pk=self.kwargs['pk'])
+        post = self.object
         post.increment_views()
+
         context['title'] = post.title
         context['post'] = post
+        context['comments'] = Comment.objects.filter(post=post)
+        if self.request.user.is_authenticated:
+            context['comment_form'] = CommentAddForm()
         return context
 
 
-def add_post(request):
-    """Добавление статьи от пользователя"""
-    if request.method == 'POST':
-        form = PostAddForm(request.POST, request.FILES)
-        if form.is_valid():
-            post = form.save()
-            messages.success(request, 'Вы успешно создали статью!')
-            return redirect('post_detail', pk=post.pk)
-    else:
-        form = PostAddForm()
-    context = {
-        'form': form,
-        'title': 'Добавить статью',
-
-    }
-    return render(request, 'cooking/article_add_form.html', context)
+# def add_post(request):
+#     """Добавление статьи от пользователя"""
+#     if request.method == 'POST':
+#         form = PostAddForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             post = form.save()
+#             messages.success(request, 'Вы успешно создали статью!')
+#             return redirect('post_detail', pk=post.pk)
+#     else:
+#         form = PostAddForm()
+#     context = {
+#         'form': form,
+#         'title': 'Добавить статью',
+#
+#     }
+#     return render(request, 'cooking/article_add_form.html', context)
 
 
 class AddPost(SuccessMessageMixin, CreateView):
@@ -142,6 +146,20 @@ class SearchResult(Index):
             Q(title__icontains=word) | Q(content__icontains=word)
         )
         return posts
+
+
+def add_comment(request, post_id):
+    """Добавление комментария к посту"""
+    form = CommentAddForm(data=request.POST)
+    if form.is_valid():
+        comment = form.save(commit=False)
+        comment.post = Post.objects.get(pk=post_id)
+        comment.user = request.user
+        comment.save()
+        messages.success(request, 'Ваш комментарий успешно добавлен!')
+
+    return redirect('post_detail', pk=post_id)
+
 
 def user_login(request):
     """Аутентификация пользователя"""

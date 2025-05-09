@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 
-from .models import Category, Post
+from .models import Category, Post, Comment
 
 
 class PostAdmin(admin.ModelAdmin):
@@ -15,8 +15,10 @@ class PostAdmin(admin.ModelAdmin):
         if obj.photo:
             return mark_safe(f'<img src="{obj.photo.url}" width="50" height="60">')
         return "-"
+
     get_photo_image.short_description = 'Изображение поста'
 
 
 admin.site.register(Category)
 admin.site.register(Post, PostAdmin)
+admin.site.register(Comment)
