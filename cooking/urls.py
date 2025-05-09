@@ -12,6 +12,7 @@ urlpatterns = [
     path('add_article/', AddPost.as_view(), name='add'),
     path('post/<int:pk>/update/', UpdatePost.as_view(), name='update_post'),
     path('post/<int:pk>/delete/', DeletePost.as_view(), name='delete_post'),
+    path('search/', SearchResult.as_view(), name='search'),
 
     path('login/', user_login, name='login'),
     path('logout/', user_logout, name='logout'),

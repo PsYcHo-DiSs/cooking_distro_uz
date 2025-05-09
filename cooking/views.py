@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView
 from django.urls import reverse_lazy
+from django.db.models import Q
 
 from .models import Category, Post
 from .forms import PostAddForm, LoginForm, RegistrationForm
@@ -130,6 +131,17 @@ class DeletePost(SuccessMessageMixin, DeleteView):
     context_object_name = 'post'
     success_message = 'Вы успешно удалили статью!'
 
+
+class SearchResult(Index):
+    """Поиск в заголовках и содержании статей"""
+
+    def get_queryset(self):
+        """Функция фильтрации выборок из базы"""
+        word = self.request.GET.get('q')
+        posts = Post.objects.filter(
+            Q(title__icontains=word) | Q(content__icontains=word)
+        )
+        return posts
 
 def user_login(request):
     """Аутентификация пользователя"""
