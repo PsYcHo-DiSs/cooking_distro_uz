@@ -5,9 +5,9 @@ from .models import Category, Post, Comment
 
 
 class PostAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'watched', 'is_published', 'category', 'created_at', 'updated_at', 'get_photo_image')
+    list_display = ('id', 'title', 'watched', 'is_published', 'category', 'author', 'created_at', 'updated_at', 'get_photo_image')
     list_display_links = ('id', 'title')
-    list_editable = ('is_published',)
+    list_editable = ('is_published', 'author')
     readonly_fields = ('watched',)
     list_filter = ('is_published', 'category', 'watched',)
 

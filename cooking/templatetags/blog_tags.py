@@ -22,3 +22,8 @@ def get_top_5_posts():
         top_5_posts = Post.objects.filter(is_published=True).order_by('-watched')[:5]
         cache.set('top_5_posts', top_5_posts, 60)
     return top_5_posts
+
+
+@register.simple_tag()
+def get_user_posts():
+    """"""

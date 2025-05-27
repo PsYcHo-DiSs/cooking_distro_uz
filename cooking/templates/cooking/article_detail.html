@@ -7,8 +7,11 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between">{{ post.category }}
                 <div>
-                    <a href="{% url 'delete_post' post.pk %}" class="btn btn-dark">Удалить</a>
-                    <a href="{% url 'update_post' post.pk %}" class="btn btn-dark">Изменить</a>
+                    {% if request.user == post.author %}
+                        <a href="{% url 'delete_post' post.pk %}" class="btn btn-dark">Удалить</a>
+                        <a href="{% url 'update_post' post.pk %}" class="btn btn-dark">Изменить</a>
+                    {% endif %}
+
                     <a href="{% url 'posts_by_category' post.category.pk %}" class="btn btn-dark">Назад</a>
                 </div>
             </div>
@@ -26,7 +29,9 @@
                 </p>
             </div>
             <div class="card-footer d-flex justify-content-between"><p class="card-text">{{ post.created_at }}</p>
-                <a href="/profile/1">Автор статьи: Какой-то человек</a>
+                {% if post.author %}
+                <a href="{% url 'profile' post.author.pk %}">{{ post.author.username }}</a>
+                {% endif %}
                 <p class="card-text">{{ post.watched }}</p>
             </div>
         </div>

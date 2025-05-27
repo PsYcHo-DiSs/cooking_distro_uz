@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 
 from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
@@ -113,10 +113,15 @@ class PostDetail(SuccessMessageMixin, DetailView):
 
 class AddPost(SuccessMessageMixin, CreateView):
     """Добавление статьи от пользователя"""
+    model = Post
     form_class = PostAddForm
     template_name = 'cooking/article_add_form.html'
     extra_context = {'title': 'Добавить статью'}
     success_message = 'Вы успешно создали статью!'
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user  # Вот где присваивается автор
+        return super().form_valid(form)
 
 
 class UpdatePost(SuccessMessageMixin, UpdateView):
@@ -201,11 +206,14 @@ def user_register(request):
     }
     return render(request, 'cooking/register_form.html', context)
 
-# def user_detail(request, pk: int):
-#     """Страница пользователя"""
-#     user = User.objects.filter(pk=pk)
-#     if user[0]:
-#         context = {
-#
-#         }
-#         return render(request, 'cooking/profile.html', context)
+
+def user_profile(request, user_id: int):
+    """Функция отображения странички пользователя"""
+    user = get_object_or_404(User, pk=user_id)
+    posts = Post.objects.filter(author=user)
+    context = {
+        'title': f'Страница пользователя {user.username}',
+        'user': user,
+        'posts': posts,
+    }
+    return render(request, 'cooking/user_profile.html', context)
