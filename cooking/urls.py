@@ -14,6 +14,8 @@ urlpatterns = [
     path('post/<int:pk>/delete/', DeletePost.as_view(), name='delete_post'),
     path('search/', SearchResult.as_view(), name='search'),
     path('change_password/', UserChangePassword.as_view(), name='change_password'),
+    path('posts/api/', CookingAPI.as_view(), name='CookingAPI'),
+    path('posts/api/<int:pk>', CookingAPIDetail.as_view(), name='CookingAPIDetail'),
 
     path('add_comment/<int:post_id>', add_comment, name='add_comment'),
     path('login/', user_login, name='login'),

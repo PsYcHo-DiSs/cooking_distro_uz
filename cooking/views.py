@@ -11,6 +11,8 @@ from django.db.models import Q
 from .models import Category, Post, Comment
 from .forms import PostAddForm, LoginForm, RegistrationForm, CommentAddForm
 from .mixins import SuccessMessageMixin
+from .serializers import PostSerializer
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 
 
 # def index(request):
@@ -225,3 +227,15 @@ class UserChangePassword(SuccessMessageMixin, PasswordChangeView):
     template_name = 'cooking/password_change_form.html'
     success_message = 'Пароль успешно изменён'
     success_url = reverse_lazy('index')
+
+
+class CookingAPI(ListAPIView):
+    """Выдача всех статей по API"""
+    queryset = Post.objects.filter(is_published=True)
+    serializer_class = PostSerializer
+
+
+class CookingAPIDetail(RetrieveAPIView):
+    """Выдача статьи по API"""
+    queryset = Post.objects.filter(is_published=True)
+    serializer_class = PostSerializer
