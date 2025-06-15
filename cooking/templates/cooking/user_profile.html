@@ -17,6 +17,11 @@
                                 <button class="btn btn-primary">Follow</button>
                                 <button class="btn btn-outline-primary">Message</button>
                             </div>
+                            <div>
+                                <a href="{% url 'change_password' %}" class="btn btn-warning">
+                                    <i class="fa-solid fa-xmark fs-5">Изменить пароль</i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -137,15 +142,15 @@
                     <div class="d-flex justify-content-between">
                         <div class="card-text">{{ post.title }}</div>
                         <div class="d-flex justify-content-between">
-                            <div>{{ post.watched }}</div>
+                            <div style="padding-right: 20px">Watched: {{ post.watched }}</div>
                             {% if request.user == post.author %}
                             <div>
-                                <a href="{% url 'update_post' post.pk %}" class="btn btn-light">
+                                <a href="{% url 'update_post' post.pk %}" class="btn btn-success">
                                     <i class="fa-solid fa-pen-to-square fs-5">Изменить</i>
                                 </a>
                             </div>
                             <div>
-                                <a href="{% url 'delete_post' post.pk %}" class="btn btn-light">
+                                <a href="{% url 'delete_post' post.pk %}" class="btn btn-danger">
                                     <i class="fa-solid fa-xmark fs-5">Удалить</i>
                                 </a>
                             </div>

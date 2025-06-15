@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 
 from django.contrib.auth import login, logout
+from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.db.models import Q
 
 from .models import Category, Post, Comment
@@ -217,3 +218,10 @@ def user_profile(request, user_id: int):
         'posts': posts,
     }
     return render(request, 'cooking/user_profile.html', context)
+
+
+class UserChangePassword(SuccessMessageMixin, PasswordChangeView):
+    """Смена пароля пользователя"""
+    template_name = 'cooking/password_change_form.html'
+    success_message = 'Пароль успешно изменён'
+    success_url = reverse_lazy('index')

@@ -13,6 +13,7 @@ urlpatterns = [
     path('post/<int:pk>/update/', UpdatePost.as_view(), name='update_post'),
     path('post/<int:pk>/delete/', DeletePost.as_view(), name='delete_post'),
     path('search/', SearchResult.as_view(), name='search'),
+    path('change_password/', UserChangePassword.as_view(), name='change_password'),
 
     path('add_comment/<int:post_id>', add_comment, name='add_comment'),
     path('login/', user_login, name='login'),
