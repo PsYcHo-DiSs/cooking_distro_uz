@@ -11,7 +11,7 @@ from django.db.models import Q
 from .models import Category, Post, Comment
 from .forms import PostAddForm, LoginForm, RegistrationForm, CommentAddForm
 from .mixins import SuccessMessageMixin
-from .serializers import PostSerializer
+from .serializers import PostSerializer, CategorySerializer
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 
 
@@ -239,3 +239,15 @@ class CookingAPIDetail(RetrieveAPIView):
     """Выдача статьи по API"""
     queryset = Post.objects.filter(is_published=True)
     serializer_class = PostSerializer
+
+
+class CookingCategoryAPI(ListAPIView):
+    """Выдача всех категорий по API"""
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+
+class CookingCategoryAPIDetail(RetrieveAPIView):
+    """Выдача категории по API"""
+    queryset = Post.objects.filter(is_published=True)
+    serializer_class = CategorySerializer
