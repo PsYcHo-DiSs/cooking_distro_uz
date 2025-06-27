@@ -13,6 +13,7 @@ from .forms import PostAddForm, LoginForm, RegistrationForm, CommentAddForm
 from .mixins import SuccessMessageMixin
 from .serializers import PostSerializer, CategorySerializer
 from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework.permissions import IsAuthenticated
 
 
 # def index(request):
@@ -239,6 +240,7 @@ class CookingAPIDetail(RetrieveAPIView):
     """Выдача статьи по API"""
     queryset = Post.objects.filter(is_published=True)
     serializer_class = PostSerializer
+    permission_classes = (IsAuthenticated,)
 
 
 class CookingCategoryAPI(ListAPIView):
@@ -251,3 +253,5 @@ class CookingCategoryAPIDetail(RetrieveAPIView):
     """Выдача категории по API"""
     queryset = Post.objects.filter(is_published=True)
     serializer_class = CategorySerializer
+
+
