@@ -14,7 +14,7 @@ from .mixins import SuccessMessageMixin
 from .serializers import PostSerializer, CategorySerializer
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
-
+from django.views.generic import TemplateView
 
 # def index(request):
 #     """Для главной странички"""
@@ -255,3 +255,9 @@ class CookingCategoryAPIDetail(RetrieveAPIView):
     serializer_class = CategorySerializer
 
 
+class SwaggerApiDoc(TemplateView):
+    """Документация API"""
+    template_name = 'swagger/swagger-ui.html'
+    extra_context = {
+        'schema_url': 'openapi-schema'
+    }
