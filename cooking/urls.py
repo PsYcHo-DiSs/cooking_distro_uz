@@ -1,4 +1,5 @@
 from django.urls import path
+from django.views.decorators.cache import cache_page
 
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -11,6 +12,8 @@ from .views import *
 urlpatterns = [
     # path('', index, name='index'),
     path('', Index.as_view(), name='index'),
+    # Кэширование главной страницы на базе файловой системы
+    # path('', cache_page(60 * 15)(Index.as_view()), name='index'),
     # path('category/<int:pk>/', posts_by_category, name='posts_by_category'),
     path('category/<int:pk>/', PostByCategory.as_view(), name='posts_by_category'),
     # path('post/<int:pk>/', post_detail, name='post_detail'),

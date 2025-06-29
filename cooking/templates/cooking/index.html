@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load blog_tags %}
+{% load cache %}
 
 {% block main %}
 <h2>Кулинарный портал</h2>
@@ -10,6 +11,7 @@
         {% for category in categories %}
         {% include 'cooking/components/_category_buttons.html' %}
         {% endfor %}
+
     </div>
     <!-- Posts-->
     <div class="col-8">
